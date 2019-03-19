@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # @Time    : 2019/3/18 8:30
 # @Author  : mqray
-# @Site    : 
+# @Site    :
 # @File    : try.py
 # @Software: PyCharm
 
@@ -17,10 +17,12 @@ from sklearn.model_selection import  train_test_split
 from sklearn import  linear_model
 from sklearn.linear_model import LinearRegression,LogisticRegression
 from sklearn.svm import  SVR
-from sklearn.preprocessing import MinMaxScaler
+from sklearn.preprocessing import MinMaxScaler,StandardScaler,RobustScaler
 from sklearn.preprocessing import Binarizer
 import datetime
 from sklearn.tree import DecisionTreeRegressor
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.metrics import  mean_absolute_error
 columns = ['id','auth','age','college','black','4G','use_age','lasted_pay',
            'lasted_pay_money','ave_6','bill_now','surplus','arrears','sensity',
            'chat_num','market','show_3','wanda','sam','movie','tour','gym',
@@ -29,7 +31,8 @@ train = pd.read_csv(r'E:\TIANCHI\MOBILE\train_dataset.csv',names=columns)
 train.drop(index=0,inplace=True)
 train.drop(columns='id',axis=1,inplace=True)
 
-
+y = train['score']
+other = train.drop(columns='score')
 # train_copy = pd.DataFrame(train.iloc[:,:],dtype=np.float)
 # use_age = train_copy['use_age']
 # lasted_pay_money = train_copy['lasted_pay_money']
@@ -42,33 +45,38 @@ train.drop(columns='id',axis=1,inplace=True)
 # tour = train_copy['tour']
 # other = pd.concat([use_age,lasted_pay_money,lasted_pay,ave_6,bill_now,chat_num,show_3,movie,tour],axis=1)
 
-# Binarizer(threshold=131).fit_transform(train['ave_6'].to_frame())
-# Binarizer(threshold=89).fit_transform(train['bill_now'].to_frame())
-# Binarizer(threshold=139).fit_transform(train['use_age'].to_frame())
-# Binarizer(threshold=1).fit_transform(train['show_3'].to_frame())
-# Binarizer(threshold=32).fit_transform(train['chat_num'].to_frame())
-# Binarizer(threshold=100).fit_transform(train['lasted_pay_money'].to_frame())
 
-y = train['score']
-other = train.drop(columns='score')
-
-# scaler = MinMaxScaler()
-# scaler = scaler.fit(other)
-# X = scaler.transform(other)
-X =  MinMaxScaler().fit_transform(other)
+X =  RobustScaler(with_scaling=True).fit_transform(other)
 X_train,X_val,y_train,y_val = train_test_split(X,y,test_size=0.2,random_state=3)
 
-# model = LinearRegression(normalize=True)
-# model = SVR(kernel='rbf',C=100,gamma=1.0)
-
-model = DecisionTreeRegressor()
+model = RandomForestRegressor()
 model.fit(X_train,y_train)
-train_score = model.score(X_train,y_train)
 start = datetime.datetime.now()
-cv_score = model.score(X_val,y_val)
-print('train_score:{0:0.6f};cv_score:{1:.6f}'.format(train_score,cv_score))
 
-plt.clf()
+res = model.predict(X_val)
+
+mae_pre = mean_absolute_error(y_val,res)
+score = 1/(1+mae_pre)
+print(score)
+#
+# columns1 = ['id','auth','age','college','black','4G','use_age','lasted_pay',
+#            'lasted_pay_money','ave_6','bill_now','surplus','arrears','sensity',
+#            'chat_num','market','show_3','wanda','sam','movie','tour','gym',
+#            'netshopping','express','finance','vedio','airplane','subway','vistor']
+# test_data = pd.read_csv('test_dataset.csv',names=columns1)
+# test_data.drop(index=0,inplace=True)
+#
+# id = test_data['id'].copy()
+# test_data.drop(['id'],axis=1,inplace=True)
+# test_data = pd.DataFrame(test_data,dtype=np.float)
+# test_data = RobustScaler(with_scaling=True).fit_transform(test_data)
+# result = model.predict(test_data)
+#
+# final = pd.DataFrame(result,columns=['score'])
+# id = id.copy().reset_index(drop=True)
+# file = pd.concat([id,final],axis=1)
+# file.to_csv('res.csv',index=0,float_format='%.0f',encoding='utf-8')
+
 
 
 
