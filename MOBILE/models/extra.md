@@ -30,3 +30,15 @@
 #     else:
 #         cnt2 +=1
 # print('succ:{%.2f%%}'%(100*cnt1/(cnt1+cnt2)))
+
+data.drop(data[data['ave_6'] > 750].index, inplace=True)
+data.drop(data[data['surplus'] > 2000].index, inplace=True)
+data.drop(data[data['netshopping'] > 300000].index, inplace=True)
+data.drop(data[data['express'] > 2000].index, inplace=True)
+data.drop(data[data['finance'] > 100000].index, inplace=True)
+data.drop(data[data['vedio'] > 100000].index, inplace=True)
+data.drop(data[data['airplane'] > 1000].index, inplace=True)
+data.drop(data[data['subway'] > 500].index, inplace=True)
+data.drop(data[data['vistor'] > 2000].index, inplace=True)
+data.drop(data[data['sensity']==0].index, inplace=True)
+#print(len(data))49787

@@ -31,6 +31,7 @@ train = pd.read_csv(r'E:\TIANCHI\MOBILE\train_dataset.csv',names=columns)
 train.drop(index=0,inplace=True)
 train.drop(columns='id',axis=1,inplace=True)
 
+
 y = train['score']
 other = train.drop(columns='score')
 # train_copy = pd.DataFrame(train.iloc[:,:],dtype=np.float)
