@@ -29,7 +29,6 @@ test = pd.read_csv(r'E:\TIANCHI\MOBILE\datasets\test_dataset.csv')
 id = test['用户编码']
 id = id.to_frame(name='id')
 
-
 target = train_row['信用分']
 train_row.drop('信用分',axis=1,inplace=True)
 row_data = train_row.append(test)
